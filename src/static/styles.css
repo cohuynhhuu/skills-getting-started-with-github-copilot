@@ -126,6 +126,15 @@ section h3 {
   flex-wrap: wrap;
 }
 
+/* Ensure any list markers are hidden inside participants */
+.participants-badges,
+.participants-badges ul,
+.participants-badges li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .participant-chip {
   background: linear-gradient(90deg,#fff,#eef6ff);
   color: #062d71;
@@ -134,6 +143,32 @@ section h3 {
   font-weight: 600;
   font-size: 0.88rem;
   box-shadow: 0 1px 0 rgba(255,255,255,0.6) inset, 0 2px 6px rgba(10, 20, 50, 0.04);
+}
+
+/* Make chip content flow nicely and include a small delete button */
+.participant-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.participant-email {
+  display: inline-block;
+}
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: rgba(6, 45, 113, 0.8);
+  cursor: pointer;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 2px 6px;
+  line-height: 1;
+}
+.delete-btn:hover {
+  background: rgba(6, 45, 113, 0.08);
+  color: #c62828;
 }
 
 /* muted no-participants chip */

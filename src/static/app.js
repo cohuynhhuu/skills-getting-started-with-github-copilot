@@ -56,7 +56,49 @@ document.addEventListener("DOMContentLoaded", () => {
           details.participants.forEach((p) => {
             const chip = document.createElement("span");
             chip.className = "participant-chip";
-            chip.textContent = p;
+
+            const emailSpan = document.createElement("span");
+            emailSpan.className = "participant-email";
+            emailSpan.textContent = p;
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "delete-btn";
+            deleteBtn.setAttribute("aria-label", `Remove ${p}`);
+            deleteBtn.textContent = "✕";
+
+            // Handle delete click
+            deleteBtn.addEventListener("click", async (e) => {
+              e.stopPropagation();
+              if (!confirm(`Unregister ${p} from ${name}?`)) return;
+
+              try {
+                const res = await fetch(
+                  `/activities/${encodeURIComponent(name)}/participants?email=${encodeURIComponent(p)}`,
+                  { method: "DELETE" }
+                );
+
+                const result = await res.json();
+                if (res.ok) {
+                  messageDiv.textContent = result.message;
+                  messageDiv.className = "success";
+                  // Refresh activities to update UI
+                  fetchActivities();
+                } else {
+                  messageDiv.textContent = result.detail || "An error occurred";
+                  messageDiv.className = "error";
+                }
+                messageDiv.classList.remove("hidden");
+                setTimeout(() => messageDiv.classList.add("hidden"), 5000);
+              } catch (err) {
+                messageDiv.textContent = "Failed to remove participant.";
+                messageDiv.className = "error";
+                messageDiv.classList.remove("hidden");
+                console.error("Error removing participant:", err);
+              }
+            });
+
+            chip.appendChild(emailSpan);
+            chip.appendChild(deleteBtn);
             participantsBadges.appendChild(chip);
           });
         } else {
