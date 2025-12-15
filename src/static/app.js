@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
+      // Reset activity select so options don't duplicate if fetched again
+      activitySelect.innerHTML = '<option value="">-- Select an activity --</option>';
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
@@ -20,12 +22,57 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+        // Top row: title + availability badge
+        const topRow = document.createElement("div");
+        topRow.className = "top-row";
+
+        const title = document.createElement("h4");
+        title.textContent = name;
+
+        const badge = document.createElement("span");
+        badge.className = "badge";
+        badge.textContent = `${spotsLeft} spots left`;
+
+        topRow.appendChild(title);
+        topRow.appendChild(badge);
+
+        const desc = document.createElement("p");
+        desc.textContent = details.description;
+
+        const schedule = document.createElement("p");
+        schedule.className = "meta";
+        schedule.textContent = `Schedule: ${details.schedule}`;
+
+        // Participants chips
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants";
+        const participantsTitle = document.createElement("p");
+        participantsTitle.className = "participants-title";
+        participantsTitle.textContent = "Participants:";
+
+        const participantsBadges = document.createElement("div");
+        participantsBadges.className = "participants-badges";
+        if (Array.isArray(details.participants) && details.participants.length > 0) {
+          details.participants.forEach((p) => {
+            const chip = document.createElement("span");
+            chip.className = "participant-chip";
+            chip.textContent = p;
+            participantsBadges.appendChild(chip);
+          });
+        } else {
+          const no = document.createElement("span");
+          no.className = "no-participants";
+          no.textContent = "No participants yet";
+          participantsBadges.appendChild(no);
+        }
+
+        participantsSection.appendChild(participantsTitle);
+        participantsSection.appendChild(participantsBadges);
+
+        activityCard.appendChild(topRow);
+        activityCard.appendChild(desc);
+        activityCard.appendChild(schedule);
+        activityCard.appendChild(participantsSection);
 
         activitiesList.appendChild(activityCard);
 
